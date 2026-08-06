@@ -54,6 +54,7 @@ pub struct BeaconBlockBody<P: Preset> {
         ContiguousList<SignedBlsToExecutionChange, P::MaxBlsToExecutionChanges>,
     pub blob_kzg_commitments: ContiguousList<KzgCommitment, P::MaxBlobCommitmentsPerBlock>,
     pub execution_requests: ExecutionRequests<P>,
+    pub client_data: H256,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, Ssz)]
@@ -85,6 +86,7 @@ pub struct BlindedBeaconBlockBody<P: Preset> {
         ContiguousList<SignedBlsToExecutionChange, P::MaxBlsToExecutionChanges>,
     pub blob_kzg_commitments: ContiguousList<KzgCommitment, P::MaxBlobCommitmentsPerBlock>,
     pub execution_requests: ExecutionRequests<P>,
+    pub client_data: H256,
 }
 
 #[derive(Clone, PartialEq, Eq, Debug, Deserialize, Serialize, Ssz)]

@@ -609,6 +609,7 @@ impl<P: Preset> SignedBeaconBlock<P> {
                             bls_to_execution_changes,
                             blob_kzg_commitments,
                             execution_requests,
+                            client_data: H256::zero(),
                         },
                     }
                     .into(),
@@ -839,6 +840,12 @@ impl<P: Preset> BeaconBlock<P> {
             Self::Gloas(block) => {
                 block.body.graffiti = graffiti;
             }
+        }
+    }
+
+    pub fn set_client_data(&mut self, client_data: H256) {
+        if let Self::Fulu(block) = self {
+            block.body.client_data = client_data;
         }
     }
 

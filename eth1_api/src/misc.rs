@@ -22,8 +22,10 @@ pub type RealController<P> = ApiController<P, ()>;
 #[cfg_attr(test, derive(PartialEq, Eq))]
 pub enum ClientCode {
     Besu,
+    Caplin,
     EthereumJS,
     Erigon,
+    Ethrex,
     GoEthereum,
     Grandine,
     Lighthouse,
@@ -42,8 +44,10 @@ impl ClientCode {
     pub fn as_str(&self) -> &str {
         match self {
             Self::Besu => "BU",
+            Self::Caplin => "CN",
             Self::EthereumJS => "EJ",
             Self::Erigon => "EG",
+            Self::Ethrex => "EX",
             Self::GoEthereum => "GE",
             Self::Grandine => "GR",
             Self::Lighthouse => "LH",
@@ -65,8 +69,10 @@ impl FromStr for ClientCode {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(match s {
             "BU" => Self::Besu,
+            "CN" => Self::Caplin,
             "EJ" => Self::EthereumJS,
             "EG" => Self::Erigon,
+            "EX" => Self::Ethrex,
             "GE" => Self::GoEthereum,
             "GR" => Self::Grandine,
             "LH" => Self::Lighthouse,

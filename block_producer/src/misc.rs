@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use anyhow::Result;
-use eth1_api::{ClientVersionV1, ClientVersions};
+use eth1_api::{ClientCode, ClientVersionV1, ClientVersions};
 use execution_engine::PayloadId;
 use grandine_version::{APPLICATION_NAME_WITH_VERSION, APPLICATION_NAME_WITH_VERSION_AND_COMMIT};
 use serde::{Deserialize, Serialize};
@@ -123,6 +123,53 @@ pub fn build_graffiti(
     }
 
     graffiti
+}
+
+pub fn build_client_data(client_versions: Option<&ClientVersions>) -> H256 {
+    const FIELD_VERSION: u8 = 1;
+    const SETUP_SIMPLE: u8 = 3;
+    const THRESHOLD_SINGLE_CLIENT: u8 = 1;
+
+    let mut report = [0; H256::len_bytes()];
+    report[0] = FIELD_VERSION;
+    report[1] = (SETUP_SIMPLE << 3) | THRESHOLD_SINGLE_CLIENT;
+
+    if let Some(client_versions) = client_versions {
+        for (index, client_version) in client_versions.iter().take(14).enumerate() {
+            report[2 + index] = (consensus_client_code_value(&ClientCode::Grandine) << 4)
+                | execution_client_code_value(&client_version.code);
+        }
+    }
+
+    report.into()
+}
+
+fn consensus_client_code_value(client_code: &ClientCode) -> u8 {
+    match client_code {
+        ClientCode::Caplin => 3,
+        ClientCode::Grandine => 4,
+        ClientCode::Lighthouse => 5,
+        ClientCode::Lodestar => 6,
+        ClientCode::Nimbus => 7,
+        ClientCode::Teku => 8,
+        ClientCode::Prysm => 9,
+        ClientCode::Unknown(_) => 1,
+        _ => 2,
+    }
+}
+
+fn execution_client_code_value(client_code: &ClientCode) -> u8 {
+    match client_code {
+        ClientCode::Besu => 3,
+        ClientCode::Erigon => 4,
+        ClientCode::Ethrex => 5,
+        ClientCode::GoEthereum => 6,
+        ClientCode::Nethermind => 7,
+        ClientCode::Nimbus => 8,
+        ClientCode::Reth => 9,
+        ClientCode::Unknown(_) => 1,
+        _ => 2,
+    }
 }
 
 fn append_to_graffiti(graffiti: &mut H256, data: &str) -> bool {
