@@ -93,7 +93,9 @@ use types::{
     traits::{BeaconState as _, PostBellatrixBeaconState},
 };
 
-use crate::misc::{PayloadIdEntry, ProposerData, ValidatorBlindedBlock, build_graffiti};
+use crate::misc::{
+    PayloadIdEntry, ProposerData, ValidatorBlindedBlock, build_client_data, build_graffiti,
+};
 
 const PAYLOAD_CACHE_SIZE: usize = 20;
 const PAYLOAD_ID_CACHE_SIZE: usize = 10;
@@ -642,6 +644,7 @@ struct ProducerContext<P: Preset, W: Wait> {
 #[derive(Clone, Copy, Default)]
 pub struct BlockBuildOptions {
     pub graffiti: Option<H256>,
+    pub client_data: Option<H256>,
     pub disable_blockprint_graffiti: bool,
     pub skip_randao_verification: bool,
     pub builder_boost_factor: Uint256,
@@ -993,6 +996,10 @@ impl<P: Preset, W: Wait> BlockBuildContext<P, W> {
                             bls_to_execution_changes,
                             blob_kzg_commitments: ContiguousList::default(),
                             execution_requests: ExecutionRequests::default(),
+                            client_data: self
+                                .options
+                                .client_data
+                                .unwrap_or_else(|| build_client_data(None)),
                         },
                     })),
                     Phase::Gloas => {
@@ -1201,6 +1208,13 @@ impl<P: Preset, W: Wait> BlockBuildContext<P, W> {
             .with_blob_kzg_commitments(commitments)
             .with_execution_requests(execution_requests);
 
+        let client_data = self
+            .options
+            .client_data
+            .unwrap_or_else(|| build_client_data(client_versions.as_deref()));
+
+        without_state_root_with_payload.set_client_data(client_data);
+
         if !self.options.disable_blockprint_graffiti {
             let graffiti = build_graffiti(self.options.graffiti, client_versions);
             without_state_root_with_payload.set_graffiti(graffiti);
@@ -1240,6 +1254,13 @@ impl<P: Preset, W: Wait> BlockBuildContext<P, W> {
                 let blob_kzg_commitments = response.blob_kzg_commitments().cloned();
                 let execution_requests = response.execution_requests().cloned();
                 let builder_mev = response.mev();
+
+                let client_data = self
+                    .options
+                    .client_data
+                    .unwrap_or_else(|| build_client_data(client_versions.as_deref()));
+
+                block_without_state_root.set_client_data(client_data);
 
                 if !self.options.disable_blockprint_graffiti {
                     let graffiti = build_graffiti(self.options.graffiti, client_versions);

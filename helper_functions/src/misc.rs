@@ -635,7 +635,7 @@ where
     );
 
     proof[depth.try_sub(2)?] = hashing::hash_256_256(
-        hashing::hash_256_256(body.execution_requests().hash_tree_root(), ZERO_HASHES[0]),
+        hashing::hash_256_256(body.execution_requests().hash_tree_root(), body.client_data()),
         ZERO_HASHES[1],
     );
 
@@ -680,7 +680,7 @@ where
     );
 
     proof[depth.try_sub(2)?] = hashing::hash_256_256(
-        hashing::hash_256_256(body.execution_requests().hash_tree_root(), ZERO_HASHES[0]),
+        hashing::hash_256_256(body.execution_requests().hash_tree_root(), body.client_data()),
         ZERO_HASHES[1],
     );
 

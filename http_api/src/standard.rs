@@ -198,6 +198,7 @@ pub struct ValidatorBlockQuery {
 pub struct ValidatorBlockQueryV3 {
     randao_reveal: SignatureBytes,
     graffiti: Option<H256>,
+    client_data: Option<H256>,
     #[serde(default, with = "serde_utils::bool_as_empty_string")]
     skip_randao_verification: bool,
     builder_boost_factor: Option<u64>,
@@ -3187,6 +3188,7 @@ pub async fn validator_block_v3<P: Preset, W: Wait>(
     let ValidatorBlockQueryV3 {
         randao_reveal,
         graffiti,
+        client_data,
         skip_randao_verification,
         builder_boost_factor,
     } = query;
@@ -3221,6 +3223,7 @@ pub async fn validator_block_v3<P: Preset, W: Wait>(
         proposer_index,
         BlockBuildOptions {
             graffiti,
+            client_data,
             disable_blockprint_graffiti: validator_config.disable_blockprint_graffiti,
             skip_randao_verification,
             builder_boost_factor,

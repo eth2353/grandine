@@ -45,6 +45,7 @@ impl<P: Preset> BeaconBlock<P> {
             bls_to_execution_changes,
             blob_kzg_commitments,
             execution_requests: beacon_block_execution_requests,
+            client_data,
         } = body;
 
         BlindedBeaconBlock {
@@ -66,6 +67,7 @@ impl<P: Preset> BeaconBlock<P> {
                 bls_to_execution_changes,
                 blob_kzg_commitments: kzg_commitments.unwrap_or(blob_kzg_commitments),
                 execution_requests: execution_requests.unwrap_or(beacon_block_execution_requests),
+                client_data,
             },
         }
     }
@@ -98,6 +100,7 @@ impl<P: Preset> BlindedBeaconBlock<P> {
             bls_to_execution_changes,
             blob_kzg_commitments,
             execution_requests,
+            client_data,
         } = body;
 
         let body = BeaconBlockBody {
@@ -114,6 +117,7 @@ impl<P: Preset> BlindedBeaconBlock<P> {
             bls_to_execution_changes,
             blob_kzg_commitments,
             execution_requests,
+            client_data,
         };
 
         BeaconBlock {

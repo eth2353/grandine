@@ -1778,6 +1778,10 @@ impl<P: Preset> BlockBodyWithElectraAttestations<P> for GloasBeaconBlockBody<P> 
 // Previously in `PostElectraBeaconBlockBody`
 pub trait BlockBodyWithExecutionRequests<P: Preset>: BeaconBlockBody<P> {
     fn execution_requests(&self) -> &ExecutionRequests<P>;
+
+    fn client_data(&self) -> H256 {
+        H256::zero()
+    }
 }
 
 impl<P: Preset> BlockBodyWithExecutionRequests<P> for ElectraBeaconBlockBody<P> {
@@ -1796,11 +1800,19 @@ impl<P: Preset> BlockBodyWithExecutionRequests<P> for FuluBeaconBlockBody<P> {
     fn execution_requests(&self) -> &ExecutionRequests<P> {
         &self.execution_requests
     }
+
+    fn client_data(&self) -> H256 {
+        self.client_data
+    }
 }
 
 impl<P: Preset> BlockBodyWithExecutionRequests<P> for FuluBlindedBeaconBlockBody<P> {
     fn execution_requests(&self) -> &ExecutionRequests<P> {
         &self.execution_requests
+    }
+
+    fn client_data(&self) -> H256 {
+        self.client_data
     }
 }
 
